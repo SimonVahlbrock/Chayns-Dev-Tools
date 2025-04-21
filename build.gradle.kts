@@ -36,7 +36,7 @@ dependencies {
     // Add JSON library (org.json:json)
     implementation("org.json:json:20231013")
     // Add Java WebSocket library
-    implementation("org.java-websocket:Java-WebSocket:1.5.4")
+    implementation("org.java-websocket:Java-WebSocket:1.6.0")
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
