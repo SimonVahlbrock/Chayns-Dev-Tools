@@ -34,7 +34,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.opentest4j)
     // Add JSON library (org.json:json)
-    implementation("org.json:json:20231013")
+    implementation("org.json:json:20250107")
     // Add Java WebSocket library
     implementation("org.java-websocket:Java-WebSocket:1.5.4")
 
