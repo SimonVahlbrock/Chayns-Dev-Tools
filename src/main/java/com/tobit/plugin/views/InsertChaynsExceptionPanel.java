@@ -10,18 +10,21 @@ import com.tobit.plugin.models.data.ExceptionItem;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 public class InsertChaynsExceptionPanel {
     private final JPanel panel = new JPanel(new GridBagLayout());
     private final Editor editor;
     private final ChaynsExceptionController controller;
 
+    private JComboBox<String> namespaceCombo;
     private final JBTextField nameField = new JBTextField();
     private final JBTextField statusCodeField = new JBTextField();
     private final JComboBox<String> logLevelCombo = new JComboBox<>(new String[]{"Info", "Warn", "Error"});
     private final JBTextField descriptionField = new JBTextField();
     private final JBTextField messageField = new JBTextField();
     private final JButton submitButton = new JButton("Insert Exception");
+    private final JLabel namespaceHintLabel = new JLabel();
 
     public InsertChaynsExceptionPanel(ChaynsExceptionController controller, Editor editor) {
         this.editor = editor;
@@ -57,7 +60,7 @@ public class InsertChaynsExceptionPanel {
     private void setupUI() {
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         panel.setMinimumSize(new Dimension(300, 0));
-        panel.setPreferredSize(new Dimension(400, 300));
+        panel.setPreferredSize(new Dimension(400, 330));
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -66,7 +69,33 @@ public class InsertChaynsExceptionPanel {
         constraints.gridy = 0;
         constraints.weightx = 0.2;
 
+        List<String> namespaces = controller.getNamespaces();
+        boolean hasMultipleNamespaces = namespaces.size() > 1;
+        int currentRow = 0;
+
+        // Only show namespace dropdown if there are multiple namespaces
+        if (hasMultipleNamespaces) {
+            // Namespace selection dropdown
+            panel.add(new JBLabel("Namespace:"), constraints);
+            constraints.gridx = 1;
+            constraints.weightx = 0.8;
+
+            // Create and populate namespace dropdown
+            namespaceCombo = new JComboBox<>(namespaces.toArray(new String[0]));
+            if (!namespaces.isEmpty()) {
+                namespaceCombo.setSelectedItem(controller.getSelectedNamespace());
+            }
+            namespaceCombo.addActionListener(e ->
+                    controller.setSelectedNamespace((String) namespaceCombo.getSelectedItem())
+            );
+            panel.add(namespaceCombo, constraints);
+            currentRow++;
+        }
+
         // Name field with tooltip
+        constraints.gridx = 0;
+        constraints.gridy = currentRow++;
+        constraints.weightx = 0.2;
         panel.add(new JBLabel("Name:"), constraints);
         constraints.gridx = 1;
         constraints.weightx = 0.8;
@@ -75,7 +104,7 @@ public class InsertChaynsExceptionPanel {
 
         // Status Code field
         constraints.gridx = 0;
-        constraints.gridy = 1;
+        constraints.gridy = currentRow++;
         constraints.weightx = 0.2;
         panel.add(new JBLabel("Statuscode:"), constraints);
         constraints.gridx = 1;
@@ -85,7 +114,7 @@ public class InsertChaynsExceptionPanel {
 
         // Log Level combo
         constraints.gridx = 0;
-        constraints.gridy = 2;
+        constraints.gridy = currentRow++;
         constraints.weightx = 0.2;
         panel.add(new JBLabel("LogLevel:"), constraints);
         constraints.gridx = 1;
@@ -94,7 +123,7 @@ public class InsertChaynsExceptionPanel {
 
         // Description field with tooltip
         constraints.gridx = 0;
-        constraints.gridy = 3;
+        constraints.gridy = currentRow++;
         constraints.weightx = 0.2;
         panel.add(new JBLabel("Description:"), constraints);
         constraints.gridx = 1;
@@ -104,7 +133,7 @@ public class InsertChaynsExceptionPanel {
 
         // Message field with tooltip
         constraints.gridx = 0;
-        constraints.gridy = 4;
+        constraints.gridy = currentRow++;
         constraints.weightx = 0.2;
         panel.add(new JBLabel("Message:"), constraints);
         constraints.gridx = 1;
@@ -112,9 +141,23 @@ public class InsertChaynsExceptionPanel {
         messageField.setToolTipText("A new textstring is automatically created for the error code. The texts can then be adjusted in the textstring administration. Parameters must be specified in the following format: ##text##. Language is german");
         panel.add(messageField, constraints);
 
+        // If there's only one namespace, show a hint above the submit button
+        if (!hasMultipleNamespaces && !namespaces.isEmpty()) {
+            constraints.gridx = 0;
+            constraints.gridy = currentRow++;
+            constraints.gridwidth = 2;
+            constraints.anchor = GridBagConstraints.CENTER;
+
+            String namespace = controller.getSelectedNamespace();
+            namespaceHintLabel.setText("Using namespace: " + namespace);
+            namespaceHintLabel.setForeground(new Color(100, 100, 100)); // Gray color for the hint
+            namespaceHintLabel.setFont(namespaceHintLabel.getFont().deriveFont(Font.ITALIC));
+            panel.add(namespaceHintLabel, constraints);
+        }
+
         // Submit button
         constraints.gridx = 0;
-        constraints.gridy = 5;
+        constraints.gridy = currentRow;
         constraints.gridwidth = 2;
         constraints.anchor = GridBagConstraints.CENTER;
         submitButton.addActionListener(this::onSubmit);

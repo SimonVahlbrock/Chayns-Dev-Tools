@@ -7,10 +7,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 public class ChaynsExceptionPanel {
     private final JPanel panel = new JPanel(new BorderLayout());
-    private final JLabel namespaceLabel = new JLabel();
+    private final JPanel namespacesPanel = new JPanel();
     private final ChaynsExceptionController controller;
     private final JPanel contentPanel = new JPanel();
 
@@ -23,17 +24,19 @@ public class ChaynsExceptionPanel {
         return panel;
     }
 
-    public void updateData(String namespace) {
+    public void updateData(List<String> namespaces, String selectedNamespace) {
         contentPanel.removeAll();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        namespacesPanel.removeAll();
+        namespacesPanel.setLayout(new BoxLayout(namespacesPanel, BoxLayout.Y_AXIS));
 
-        if (namespace == null || namespace.isEmpty()) {
+        if (namespaces == null || namespaces.isEmpty()) {
             // Use a vertical layout for the error message
             JPanel messagePanel = new JPanel();
             messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
             messagePanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
 
-            JLabel messageLabel = new JLabel("No namespace found in appsettings.json");
+            JLabel messageLabel = new JLabel("No namespaces found in appsettings.json");
             messageLabel.setForeground(JBColor.RED);
 
             // Add spacing between labels
@@ -42,8 +45,23 @@ public class ChaynsExceptionPanel {
 
             contentPanel.add(messagePanel);
         } else {
-            namespaceLabel.setText("Namespace: " + namespace);
-            // Add any other content for when namespace is available, positioned vertically
+            // Display all namespaces
+            JLabel titleLabel = new JLabel("Available Namespaces:");
+            titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            namespacesPanel.add(titleLabel);
+            namespacesPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+            for (String namespace : namespaces) {
+                JLabel namespaceLabel = new JLabel("• " + namespace);
+                namespaceLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+                if (namespace.equals(selectedNamespace)) {
+                    namespaceLabel.setFont(namespaceLabel.getFont().deriveFont(Font.BOLD));
+                }
+                namespacesPanel.add(namespaceLabel);
+                namespacesPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+            }
+
+            contentPanel.add(namespacesPanel);
         }
 
         contentPanel.revalidate();
@@ -60,13 +78,6 @@ public class ChaynsExceptionPanel {
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        namespaceLabel.setForeground(JBColor.GRAY);
-        namespaceLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        headerPanel.add(namespaceLabel);
-
-        // Add spacing between namespace label and docs link
-        headerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-
         // Documentation link
         JLabel docsLink = new JLabel("View error codes documentation");
         docsLink.setForeground(JBColor.BLUE);
@@ -82,12 +93,12 @@ public class ChaynsExceptionPanel {
 
         // Set up main layout with components stacked vertically
         panel.removeAll();
-        panel.add(headerPanel);
+        panel.add(headerPanel, BorderLayout.NORTH);
 
         // Content panel for dynamic content
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(contentPanel);
+        panel.add(contentPanel, BorderLayout.CENTER);
     }
 
     public void reloadData() {

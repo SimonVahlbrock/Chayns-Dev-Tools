@@ -2,7 +2,8 @@ package com.tobit.plugin.models;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.tobit.plugin.models.data.ExceptionItem;
@@ -10,7 +11,6 @@ import com.tobit.plugin.services.ApiService;
 import com.tobit.plugin.models.data.ApiResponse;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,20 +18,19 @@ import java.util.List;
 
 public class ChaynsExceptionModel {
     private final Project project;
-    private String namespace = "";
-    private final List<ExceptionItem> exceptionTypes = new ArrayList<>();
+    private final List<String> namespaces = new ArrayList<>();
+    private String selectedNamespace = "";
     private final ApiService apiService = new ApiService();
 
     private final List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
     public interface DataChangeListener {
-        void onDataChanged(String namespace, List<ExceptionItem> exceptionTypes);
+        void onDataChanged(List<String> namespaces, String selectedNamespace);
     }
 
     public ChaynsExceptionModel(Project project) {
         this.project = project;
-        loadNamespaceFromAppSettings();
-        loadExceptionsFromApi();
+        loadNamespacesFromAppSettings();
     }
 
     public void addDataChangeListener(DataChangeListener listener) {
@@ -44,11 +43,12 @@ public class ChaynsExceptionModel {
 
     private void notifyDataChanged() {
         for (DataChangeListener listener : dataChangeListeners) {
-            listener.onDataChanged(namespace, exceptionTypes);
+            listener.onDataChanged(namespaces, selectedNamespace);
         }
     }
 
-    private void loadNamespaceFromAppSettings() {
+    private void loadNamespacesFromAppSettings() {
+        namespaces.clear();
         VirtualFile appSettingsFile = findFileInProject("appsettings.json");
         if (appSettingsFile != null) {
             try {
@@ -58,51 +58,22 @@ public class ChaynsExceptionModel {
 
                 if (jsonObject.has("ChaynsErrors") &&
                         jsonObject.getAsJsonObject("ChaynsErrors").has("Namespaces")) {
-                    String firstNamespace = jsonObject.getAsJsonObject("ChaynsErrors")
-                            .getAsJsonArray("Namespaces")
-                            .get(0)
-                            .getAsString();
-                    this.namespace = firstNamespace;
+                    JsonArray namespacesArray = jsonObject.getAsJsonObject("ChaynsErrors")
+                            .getAsJsonArray("Namespaces");
+
+                    for (JsonElement element : namespacesArray) {
+                        namespaces.add(element.getAsString());
+                    }
+
+                    if (!namespaces.isEmpty()) {
+                        selectedNamespace = namespaces.get(0);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    public void loadExceptionsFromApi() {
-        if (namespace.isEmpty()) {
-            return;
-        }
-
-        exceptionTypes.clear();
-
-        String apiUrl = "https://webapi.tobit.com/chaynserrors/v1/Codes?filter=" + namespace + "&withAllTranslations=false";
-        ApiResponse response = apiService.getRequest(apiUrl);
-
-        if (response.isSuccess()) {
-            Gson gson = new Gson();
-            Type listType = new TypeToken<List<ApiExceptionItem>>(){}.getType();
-            List<ApiExceptionItem> apiExceptions = gson.fromJson(response.data(), listType);
-
-            for (ApiExceptionItem apiException : apiExceptions) {
-                exceptionTypes.add(new ExceptionItem(
-                        apiException.code,
-                        apiException.description,
-                        apiException.statusCode
-                ));
-            }
-        }
-
         notifyDataChanged();
-    }
-
-    // Private class to parse API response
-    private static class ApiExceptionItem {
-        String code;
-        String description;
-        int statusCode;
-        // Other fields from API response not used
     }
 
     private VirtualFile findFileInProject(String fileName) {
@@ -134,17 +105,27 @@ public class ChaynsExceptionModel {
         return null;
     }
 
-    public String getNamespace() {
-        return namespace;
+    public List<String> getNamespaces() {
+        return Collections.unmodifiableList(namespaces);
     }
 
-    public List<ExceptionItem> getExceptionTypes() {
-        return Collections.unmodifiableList(exceptionTypes);
+    public String getSelectedNamespace() {
+        return selectedNamespace;
+    }
+
+    public void setSelectedNamespace(String namespace) {
+        if (namespaces.contains(namespace)) {
+            this.selectedNamespace = namespace;
+            notifyDataChanged();
+        }
+    }
+
+    public boolean hasNamespaces() {
+        return !namespaces.isEmpty();
     }
 
     public void reload() {
-        loadNamespaceFromAppSettings();
-        loadExceptionsFromApi();
+        loadNamespacesFromAppSettings();
     }
 
     public ApiResponse createException(ExceptionItem exceptionItem, String token) {
@@ -154,7 +135,7 @@ public class ChaynsExceptionModel {
         // Build JSON payload
         String jsonBody = String.format(
                 "{\"code\":\"%s%s\",\"statusCode\":%d,\"description\":\"%s\",\"logLevel\":%d,\"textGer\":\"%s\"}",
-                namespace,
+                selectedNamespace,
                 exceptionItem.code(),
                 exceptionItem.statusCode(),
                 exceptionItem.description(),
