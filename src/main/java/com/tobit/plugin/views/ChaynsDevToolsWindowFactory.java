@@ -9,6 +9,7 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
+import com.tobit.plugin.controller.ChaynsExceptionController;
 import com.tobit.plugin.controller.PersonsController;
 import com.tobit.plugin.controller.SitesController;
 import com.tobit.plugin.services.TokenService;
@@ -44,6 +45,7 @@ class ChaynsToolWindow {
 
     private final PersonsPanel personsPanel;
     private final SitesPanel sitesPanel;
+    private final ChaynsExceptionPanel exceptionPanel;
 
     public ChaynsToolWindow(Project project) {
         TokenService tokenService = TokenService.getInstance(project);
@@ -53,10 +55,12 @@ class ChaynsToolWindow {
         // Your panels
         PersonsController personsController = new PersonsController(project);
         SitesController sitesController = new SitesController(project);
+        ChaynsExceptionController exceptionController = new ChaynsExceptionController(project);
 
         // Create views
         this.personsPanel = personsController.createView();
         this.sitesPanel = sitesController.createView();
+        this.exceptionPanel = exceptionController.createView();
 
         setupUI();
         tokenService.addTokenChangeListener(new TokenService.TokenChangeListener() {
@@ -72,6 +76,7 @@ class ChaynsToolWindow {
         // Register views with the view manager
         ViewManager.getInstance(project).registerView(PersonsPanel.class, personsPanel);
         ViewManager.getInstance(project).registerView(SitesPanel.class, sitesPanel);
+        ViewManager.getInstance(project).registerView(ChaynsExceptionPanel.class, exceptionPanel);
     }
 
     private void setupUI() {
@@ -81,6 +86,7 @@ class ChaynsToolWindow {
         // Add tabs to tabbed pane
         tabbedPane.addTab("Sites", sitesPanel.getPanel());
         tabbedPane.addTab("Persons", personsPanel.getPanel());
+        tabbedPane.addTab("Chayns Exceptions", exceptionPanel.getPanel());
 
         // Add both views to card layout
         panel.add(loginView.getPanel(), LOGIN_CARD);
@@ -114,6 +120,7 @@ class RefreshAction extends AnAction {
         // Reload both sites and persons data
         SitesPanel sitesPanel = ViewManager.getInstance(project).getView(SitesPanel.class);
         PersonsPanel personsPanel = ViewManager.getInstance(project).getView(PersonsPanel.class);
+        ChaynsExceptionPanel exceptionPanel = ViewManager.getInstance(project).getView(ChaynsExceptionPanel.class);
 
         if (sitesPanel != null) {
             sitesPanel.reloadData();
@@ -121,6 +128,10 @@ class RefreshAction extends AnAction {
 
         if (personsPanel != null) {
             personsPanel.reloadData();
+        }
+
+        if (exceptionPanel != null) {
+            exceptionPanel.reloadData();
         }
     }
 
