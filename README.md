@@ -1,21 +1,40 @@
 # Chayns-Dev-Tools
 
 <!-- Plugin description -->
-ChaynsDevTools provides essential utilities for developers working with the chayns®.
+ChaynsDevTools provides essential utilities for developers working with chayns®.
 
 ### Features:
-- **Easy Remote Login:** Login to chayns® via chayns.de remote login. (No Credentials are store anymore)
-- **Sites Panel:** Search sites by name, SiteID or LocationID with double-click to copy functionality and token generation by click
-- **Persons Panel:** Find users by name or personId and easily retrieve information with double-click to copy functionality
-- **Persistent Data Management:** Sites and Persons are store across IDEs (atm with sync button)
-- **Shortcuts and Actions:** Use shortcuts to quickly search for sites (ALT+SHIFT+W) or persons (ALT+SHIFT+E) in the editor
+
+- **Sites Panel:**
+
+  - Search sites by name, SiteID, LocationID, personId, or user name
+  - Support for searching multiple personIds simultaneously using a variable separator
+  - Select text in editor and search via right-click menu option or shortcut (ALT+SHIFT+W)
+  - Results displayed in a table with click-to-copy functionality for any cell
+  - Right-click menu on rows to generate and copy site tokens, open sites, or preserve results for later use
+
+- **Persons Panel:**
+
+  - Search users by name, personId, or multiple personIds using a separator
+  - Select text in editor and search via right-click menu option or shortcut (ALT+SHIFT+E)
+  - Results displayed in a table with click-to-copy functionality
+  - Right-click menu on rows to preserve results for later use
+
+- **Chayns Exceptions:**
+  - Insert new exceptions via right-click menu option or ALT+SHIFT+X shortcut
+  - Automatically detects namespace configuration from project's appsettings.json
+  - Opens a configuration dialog to customize the exception parameters
+  - Inserts the formatted exception code at the current cursor position
+
+- **Remote Login:** Login to chayns® via chayns.de remote login.
+- **Persistent Data Management:** Sites and Persons are stored across IDEs
 
 ### Roadmap:
-- **Chayns Exceptions:** Create and edit chayns exceptions
-- **Search Options:** Add option to show raw search amount, so duplicates are not filtered out
-- **Roles for Api Token:** Add and delete roles for token
+
 - **UAC Panel:** Get groups for Sites and check members in Group (Only with user token)
+- **Search Options:** Add option to show raw search amount, so duplicates are not filtered out
 - **Sync Data via WebSocket:** Sync data via WebSocket to all IDEs, instead of sync button
 
-This plugin streamlines your chayns® development workflow by providing quick access to common tools and information directly within your IDE.
+This plugin streamlines your chayns® development workflow by providing quick access to common tools and information
+directly within your IDE.
 <!-- Plugin description end -->
