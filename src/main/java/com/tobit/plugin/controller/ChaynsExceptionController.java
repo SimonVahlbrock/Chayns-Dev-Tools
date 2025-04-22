@@ -25,16 +25,16 @@ public class ChaynsExceptionController {
         this.model = new ChaynsExceptionModel(project);
         this.tokenService = TokenService.getInstance(project);
 
-        model.addDataChangeListener((namespace, exceptionTypes) -> {
+        model.addDataChangeListener((namespaces, selectedNamespace) -> {
             if (view != null) {
-                view.updateData(namespace);
+                view.updateData(namespaces, selectedNamespace);
             }
         });
     }
 
     public ChaynsExceptionPanel createView() {
         view = new ChaynsExceptionPanel(this);
-        view.updateData(model.getNamespace());
+        view.updateData(model.getNamespaces(), model.getSelectedNamespace());
         return view;
     }
 
@@ -85,12 +85,16 @@ public class ChaynsExceptionController {
         model.reload();
     }
 
-    public List<ExceptionItem> getExceptionTypes() {
-        return model.getExceptionTypes();
+    public List<String> getNamespaces() {
+        return model.getNamespaces();
     }
 
-    public String getNamespace() {
-        return model.getNamespace();
+    public String getSelectedNamespace() {
+        return model.getSelectedNamespace();
+    }
+
+    public void setSelectedNamespace(String namespace) {
+        model.setSelectedNamespace(namespace);
     }
 
     public ApiResponse createException(ExceptionItem exceptionItem) {
@@ -108,6 +112,6 @@ public class ChaynsExceptionController {
     }
 
     public boolean hasNamespace() {
-        return !model.getNamespace().isEmpty();
+        return model.hasNamespaces();
     }
 }
