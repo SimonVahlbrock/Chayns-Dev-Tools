@@ -1,6 +1,5 @@
 package com.tobit.plugin.views;
 
-import com.intellij.ide.BrowserUtil;
 import com.intellij.ui.JBColor;
 import com.tobit.plugin.controller.ChaynsExceptionController;
 import com.tobit.plugin.models.data.ExceptionItem;
@@ -44,7 +43,7 @@ public class ChaynsExceptionPanel {
         docsLink.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                BrowserUtil.browse("https://dev.tobit.com/errorCodes");
+                controller.showDocumentation();
             }
         });
         namespacePanel.add(docsLink, BorderLayout.SOUTH);

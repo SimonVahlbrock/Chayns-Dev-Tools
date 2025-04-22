@@ -48,7 +48,7 @@ public class InsertChaynsExceptionAction extends AnAction {
 
         public InsertExceptionDialog(Project project, Editor editor, ChaynsExceptionController controller) {
             super(project, true);
-            exceptionPanel = new InsertChaynsExceptionPanel(project, editor, controller);
+            exceptionPanel = new InsertChaynsExceptionPanel(controller, editor);
             setTitle("Insert Chayns Exception");
             init();
         }

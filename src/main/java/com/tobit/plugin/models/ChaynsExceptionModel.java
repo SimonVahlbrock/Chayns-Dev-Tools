@@ -70,7 +70,7 @@ public class ChaynsExceptionModel {
         }
     }
 
-    private void loadExceptionsFromApi() {
+    public void loadExceptionsFromApi() {
         if (namespace.isEmpty()) {
             return;
         }
@@ -80,7 +80,7 @@ public class ChaynsExceptionModel {
         String apiUrl = "https://webapi.tobit.com/chaynserrors/v1/Codes?filter=" + namespace + "&withAllTranslations=false";
         ApiResponse response = apiService.getRequest(apiUrl);
 
-        if (response.statusCode() == 200) {
+        if (response.isSuccess()) {
             Gson gson = new Gson();
             Type listType = new TypeToken<List<ApiExceptionItem>>(){}.getType();
             List<ApiExceptionItem> apiExceptions = gson.fromJson(response.data(), listType);
@@ -105,24 +105,11 @@ public class ChaynsExceptionModel {
         // Other fields from API response not used
     }
 
-    /**
-     * Recursively searches for a file with the given name in the project
-     *
-     * @param fileName The name of the file to search for
-     * @return The found VirtualFile or null if not found
-     */
     private VirtualFile findFileInProject(String fileName) {
         VirtualFile baseDir = project.getBaseDir();
         return findFileRecursively(baseDir, fileName);
     }
 
-    /**
-     * Recursively searches for a file in the given directory and its subdirectories
-     *
-     * @param directory The directory to search in
-     * @param fileName The name of the file to search for
-     * @return The found VirtualFile or null if not found
-     */
     private VirtualFile findFileRecursively(VirtualFile directory, String fileName) {
         if (directory == null || !directory.exists() || !directory.isDirectory()) {
             return null;
@@ -158,5 +145,24 @@ public class ChaynsExceptionModel {
     public void reload() {
         loadNamespaceFromAppSettings();
         loadExceptionsFromApi();
+    }
+
+    public ApiResponse createException(ExceptionItem exceptionItem, String token) {
+        // API call to create the exception
+        String apiUrl = "https://webapi.tobit.com/chaynserrors/v1/Codes";
+
+        // Build JSON payload
+        String jsonBody = String.format(
+                "{\"code\":\"%s%s\",\"statusCode\":%d,\"description\":\"%s\",\"logLevel\":%d,\"textGer\":\"%s\"}",
+                namespace,
+                exceptionItem.code(),
+                exceptionItem.statusCode(),
+                exceptionItem.description(),
+                exceptionItem.LogLevel(),
+                exceptionItem.message()
+        );
+
+        return apiService.postRequest(apiUrl, jsonBody,
+                Collections.singletonMap("Authorization", "Bearer " + token));
     }
 }
