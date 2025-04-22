@@ -34,7 +34,7 @@ public class ChaynsExceptionPanel {
             // Use a vertical layout for the error message
             JPanel messagePanel = new JPanel();
             messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
-            messagePanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
+            messagePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 10)); // Remove left padding
 
             JLabel messageLabel = new JLabel("No namespaces found in appsettings.json");
             messageLabel.setForeground(JBColor.RED);
@@ -91,6 +91,17 @@ public class ChaynsExceptionPanel {
         });
         headerPanel.add(docsLink);
 
+        // Add spacing between labels
+        headerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+
+        // Add new instruction label
+        JLabel instructionLabel = new JLabel("Use ALT+SHIFT+X or Right-click to insert new chayns exception.");
+        instructionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        instructionLabel.setForeground(JBColor.GRAY);
+        Font currentFont = instructionLabel.getFont();
+        instructionLabel.setFont(currentFont.deriveFont(currentFont.getSize() - 1f));
+        headerPanel.add(instructionLabel);
+
         // Set up main layout with components stacked vertically
         panel.removeAll();
         panel.add(headerPanel, BorderLayout.NORTH);
@@ -98,6 +109,7 @@ public class ChaynsExceptionPanel {
         // Content panel for dynamic content
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10)); // Add consistent left padding
         panel.add(contentPanel, BorderLayout.CENTER);
     }
 
