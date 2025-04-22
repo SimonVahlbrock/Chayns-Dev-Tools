@@ -27,14 +27,14 @@ public class ChaynsExceptionController {
 
         model.addDataChangeListener((namespace, exceptionTypes) -> {
             if (view != null) {
-                view.updateData(namespace, exceptionTypes);
+                view.updateData(namespace);
             }
         });
     }
 
     public ChaynsExceptionPanel createView() {
         view = new ChaynsExceptionPanel(this);
-        view.updateData(model.getNamespace(), model.getExceptionTypes());
+        view.updateData(model.getNamespace());
         return view;
     }
 
@@ -105,5 +105,9 @@ public class ChaynsExceptionController {
 
     public void showErrorDialog(Component parent, String message, String title) {
         JOptionPane.showMessageDialog(parent, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    public boolean hasNamespace() {
+        return !model.getNamespace().isEmpty();
     }
 }

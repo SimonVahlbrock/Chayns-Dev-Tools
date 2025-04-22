@@ -6,6 +6,10 @@
 ### Added
 - Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
 
+## [1.4.7]
+### Added
+- Chayns Exceptions panel. Add exception via context menu in line (right-click). Use ALT+SHIFT+X to open the panel.
+
 ## [1.4.6]
 ### Improved
 - Migrating from Gradle IntelliJ Plugin (1.x) to (2.x) to cover IDE updates

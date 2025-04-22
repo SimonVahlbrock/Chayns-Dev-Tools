@@ -44,8 +44,9 @@
         <action id="ChaynsDevTools.InsertChaynsExceptionAction"
                 class="com.tobit.plugin.actions.InsertChaynsExceptionAction"
                 text="Insert Chayns Exception"
+                icon="/icons/toolwindowicon.svg"
                 description="Insert a ChaynsException at cursor position">
-            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt shift X"/>
         </action>
     </actions>

@@ -120,6 +120,7 @@ class RefreshAction extends AnAction {
         // Reload both sites and persons data
         SitesPanel sitesPanel = ViewManager.getInstance(project).getView(SitesPanel.class);
         PersonsPanel personsPanel = ViewManager.getInstance(project).getView(PersonsPanel.class);
+        ChaynsExceptionPanel exceptionPanel = ViewManager.getInstance(project).getView(ChaynsExceptionPanel.class);
 
         if (sitesPanel != null) {
             sitesPanel.reloadData();
@@ -127,6 +128,10 @@ class RefreshAction extends AnAction {
 
         if (personsPanel != null) {
             personsPanel.reloadData();
+        }
+
+        if (exceptionPanel != null) {
+            exceptionPanel.reloadData();
         }
     }
 

@@ -26,7 +26,28 @@ public class InsertChaynsExceptionPanel {
     public InsertChaynsExceptionPanel(ChaynsExceptionController controller, Editor editor) {
         this.editor = editor;
         this.controller = controller;
-        setupUI();
+
+        if (controller.hasNamespace()) {
+            setupUI();
+        } else {
+            setupNoNamespaceUI();
+        }
+    }
+
+    private void setupNoNamespaceUI() {
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setMinimumSize(new Dimension(300, 0));
+        panel.setPreferredSize(new Dimension(400, 150));
+
+        JLabel messageLabel = new JLabel("No namespace found in appsettings.json");
+        messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JLabel instructionLabel = new JLabel("Add a ChaynsErrors section with Namespaces to continue.");
+        instructionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        panel.setLayout(new GridLayout(2, 1));
+        panel.add(messageLabel);
+        panel.add(instructionLabel);
     }
 
     public JPanel getPanel() {
