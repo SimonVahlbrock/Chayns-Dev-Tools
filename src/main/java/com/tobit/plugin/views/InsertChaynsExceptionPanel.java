@@ -3,6 +3,7 @@ package com.tobit.plugin.views;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.util.ui.JBUI;
 import com.tobit.plugin.controller.ChaynsExceptionController;
 import com.tobit.plugin.models.data.ApiResponse;
 import com.tobit.plugin.models.data.ExceptionItem;
@@ -64,7 +65,7 @@ public class InsertChaynsExceptionPanel {
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.insets = new Insets(5, 5, 5, 5);
+        constraints.insets = JBUI.insets(5);
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.weightx = 0.2;
@@ -106,7 +107,7 @@ public class InsertChaynsExceptionPanel {
         constraints.gridx = 0;
         constraints.gridy = currentRow++;
         constraints.weightx = 0.2;
-        panel.add(new JBLabel("Statuscode:"), constraints);
+        panel.add(new JBLabel("StatusCode:"), constraints);
         constraints.gridx = 1;
         constraints.weightx = 0.8;
         statusCodeField.setToolTipText("Enter a numeric HTTP status code");
@@ -125,7 +126,7 @@ public class InsertChaynsExceptionPanel {
         constraints.gridx = 0;
         constraints.gridy = currentRow++;
         constraints.weightx = 0.2;
-        panel.add(new JBLabel("Description:"), constraints);
+        panel.add(new JBLabel("Dev note (en):"), constraints);
         constraints.gridx = 1;
         constraints.weightx = 0.8;
         descriptionField.setToolTipText("Describe the error code for the developer.");
@@ -135,7 +136,7 @@ public class InsertChaynsExceptionPanel {
         constraints.gridx = 0;
         constraints.gridy = currentRow++;
         constraints.weightx = 0.2;
-        panel.add(new JBLabel("Message:"), constraints);
+        panel.add(new JBLabel("Client note (de):"), constraints);
         constraints.gridx = 1;
         constraints.weightx = 0.8;
         messageField.setToolTipText("A new textstring is automatically created for the error code. The texts can then be adjusted in the textstring administration. Parameters must be specified in the following format: ##text##. Language is german");
@@ -149,7 +150,7 @@ public class InsertChaynsExceptionPanel {
             constraints.anchor = GridBagConstraints.CENTER;
 
             String namespace = controller.getSelectedNamespace();
-            namespaceHintLabel.setText("Using namespace: " + namespace);
+            namespaceHintLabel.setText("namespace: " + namespace);
             namespaceHintLabel.setForeground(new Color(100, 100, 100)); // Gray color for the hint
             namespaceHintLabel.setFont(namespaceHintLabel.getFont().deriveFont(Font.ITALIC));
             panel.add(namespaceHintLabel, constraints);
