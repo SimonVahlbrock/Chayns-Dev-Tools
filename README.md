@@ -1,5 +1,7 @@
 # Chayns-Dev-Tools
 
+test
+
 <!-- Plugin description -->
 ChaynsDevTools provides essential utilities for developers working with chayns®.
 
